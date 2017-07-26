@@ -13,6 +13,9 @@ dt_subset <- function(dt, i, j, env = parent.frame(), sd_cols = NULL) {
 
   if (missing(j)) {
     call <- substitute(`_dt`[i], args)
+  } else if (is.null(groups(dt))) {
+    # faster than `[, , by = character(0)]`
+    call <- substitute(`_dt`[i, j], args)
   } else {
     call <- substitute(`_dt`[i, j, by = `_vars`], args)
     call$.SDcols = sd_cols

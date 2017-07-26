@@ -13,7 +13,7 @@
 # gather(as.data.table(stocks), stock, price, -time)
 
 
-#' @export
+#' @importFrom tidyr gather
 gather.data.table <- function(data, key = "key", value = "value", ...,
                               na.rm = FALSE, convert = FALSE,
                               factor_key = FALSE) {
