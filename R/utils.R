@@ -1,8 +1,33 @@
 
-dt_subset <- function(dt, i, j, env = parent.frame(), sd_cols = NULL) {
+dt_subset <- function(dt, i, j, env = caller_env(), sd_cols = NULL) {
+
+  # # print(env)
+
+  # if (missing(j)) {
+  #   expr <- expr(dt[!! maybe_missing(i)])
+  # } else {
+  #   expr <- expr(dt[
+  #     !! maybe_missing(i),
+  #     !! j,
+  #     by = quote(list(!!! groups(dt)))
+  #   ])
+  #   expr$.SDcols <- sd_cols
+  # }
+  
+  # expr <- dt_replace2(expr)
+  # expr <- quo_expr(expr, warn = TRUE)
+
+
+  # print(expr)
+  # return(eval_bare(expr, env))
+
+
   env <- new.env(parent = env, size = 2L)
   env$`_dt` <- dt
   env$`_vars` <- deparse_all(groups(dt))
+
+
+
 
   args <- list(
     i = if (missing(i)) quote(expr =) else dt_replace(i),
@@ -15,10 +40,27 @@ dt_subset <- function(dt, i, j, env = parent.frame(), sd_cols = NULL) {
     call <- substitute(`_dt`[i, j, by = `_vars`], args)
     call$.SDcols = sd_cols
   }
-  # print(call)
+  print(call)
 
   eval(call, env)
 }
+
+
+dt_replace2 <- function(x) {
+  dplyr:::expr_substitute(x,
+    . ~ .SD,
+    n() ~ .N
+  )
+}
+
+maybe_missing <- function(x) {
+  if (is_missing(x) || quo_is_missing(x)) {
+    missing_arg()
+  } else {
+    x
+  }
+}
+
 
 dt_replace <- function(x) {
   if (is.atomic(x)) {

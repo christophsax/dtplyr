@@ -178,6 +178,8 @@ and_expr <- function(exprs) {
 
 # second version
 common_env <- function (dots){
+    print(lapply(dots, get_env))
+
   if (length(dots) == 0) return(baseenv())
   env <- get_env(dots[[1]])
   if (identical(env, emptyenv())){
@@ -225,6 +227,8 @@ summarise.tbl_dt <- function(.data, ...) {
 }
 summarise.data.table <- function(.data, ...) {
   dots <- quos(..., .named = TRUE)
+
+  print(lapply(dots, get_env))
 
   envs <- lapply(dots, get_env)
   exprs <- lapply(dots, get_expr)  
